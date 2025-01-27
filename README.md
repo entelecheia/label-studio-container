@@ -31,15 +31,16 @@ This repository contains a production-ready Docker Compose configuration for run
 .
 ├── .env                    # Environment variables configuration
 ├── docker-compose.yaml     # Docker compose configuration
-├── deploy/                 # Deployment configurations
-│   ├── nginx/             # Nginx configurations and certificates
-│   │   └── certs/         # SSL certificates
-│   └── pgsql/             # PostgreSQL configurations
-│       └── certs/         # PostgreSQL SSL certificates
-├── mydata/                # Label Studio data directory
-│   ├── data              # Application data
-│   ├── export            # Export directory
-│   └── upload            # Upload directory
+├── workspace/             # Workspace directory
+│   ├── deploy/            # Deployment configurations
+│   │   ├── nginx/        # Nginx configurations and certificates
+│   │   │   └── certs/    # SSL certificates
+│   │   └── pgsql/        # PostgreSQL configurations
+│   │       └── certs/    # PostgreSQL SSL certificates
+│   └── mydata/           # Label Studio data directory
+│       ├── data          # Application data
+│       ├── export        # Export directory
+│       └── upload        # Upload directory
 └── README.md             # This documentation
 ```
 
@@ -53,8 +54,8 @@ This repository contains a production-ready Docker Compose configuration for run
 
 2. Create required directories:
    ```bash
-   mkdir -p mydata/{data,export,upload}
-   mkdir -p deploy/{nginx,pgsql}/certs
+   mkdir -p workspace/mydata/{data,export,upload,postgres-data}
+   mkdir -p workspace/deploy/{nginx,pgsql}/certs
    ```
 
 3. Configure environment variables:
@@ -81,7 +82,7 @@ Before deploying to production, make sure to:
    - `LABEL_STUDIO_SECRET_KEY`
 
 2. Enable SSL:
-   - Place SSL certificates in `deploy/nginx/certs/`
+   - Place SSL certificates in `workspace/deploy/nginx/certs/`
    - Uncomment SSL configuration in `docker-compose.yaml`
    - Update `LABEL_STUDIO_PROTOCOL` to `https` in `.env`
 
@@ -106,7 +107,7 @@ See the `.env` file for all available configuration options. Key variables inclu
 
 2. Volume backup:
    ```bash
-   tar -czf label-studio-data.tar.gz mydata/
+   tar -czf label-studio-data.tar.gz workspace/mydata/
    ```
 
 ### Logs
@@ -136,7 +137,7 @@ docker compose logs -f redis  # Redis logs
 3. For permission issues:
    - Ensure proper ownership of data directories:
      ```bash
-     sudo chown -R 1001:1001 mydata/
+     sudo chown -R 1001:1001 workspace/mydata/
      ```
 
 ## License

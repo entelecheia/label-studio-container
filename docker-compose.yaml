@@ -12,8 +12,8 @@ services:
     environment:
       - LABEL_STUDIO_HOST=${LABEL_STUDIO_HOST:-}
     volumes:
-      - ./mydata:/label-studio/data:rw
-      - ./deploy/nginx/certs:/certs:ro
+      - ./workspace/mydata:/label-studio/data:rw
+      - ./workspace/deploy/nginx/certs:/certs:ro
     healthcheck:
       test: ["CMD", "nginx", "-t"]
       interval: 30s
@@ -53,7 +53,7 @@ services:
       - PYTHON_UNBUFFERED=${PYTHON_UNBUFFERED}
       - LABEL_STUDIO_LOG_LEVEL=${LABEL_STUDIO_LOG_LEVEL}
     volumes:
-      - ./mydata:/label-studio/data:rw
+      - ./workspace/mydata:/label-studio/data:rw
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
@@ -72,8 +72,8 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
     volumes:
-      - ${POSTGRES_DATA_DIR:-./postgres-data}:/var/lib/postgresql/data
-      - ./deploy/pgsql/certs:/var/lib/postgresql/certs:ro
+      - ${POSTGRES_DATA_DIR:-./workspace/mydata/postgres-data}:/var/lib/postgresql/data
+      - ./workspace/deploy/pgsql/certs:/var/lib/postgresql/certs:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
