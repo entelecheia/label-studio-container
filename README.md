@@ -17,11 +17,13 @@ This repository contains a production-ready Docker Compose configuration for run
 - Automatic container restart
 - Volume management for data persistence
 - Network isolation
+- Makefile for easy management
 
 ## Prerequisites
 
 - Docker Engine 20.10+
 - Docker Compose 2.0+
+- GNU Make
 - 4GB RAM minimum (8GB recommended)
 - 10GB disk space minimum
 
@@ -31,6 +33,7 @@ This repository contains a production-ready Docker Compose configuration for run
 .
 ├── .env                    # Environment variables configuration
 ├── docker-compose.yaml     # Docker compose configuration
+├── Makefile               # Make commands for easy management
 ├── workspace/             # Workspace directory
 │   ├── deploy/            # Deployment configurations
 │   │   ├── nginx/        # Nginx configurations and certificates
@@ -52,24 +55,49 @@ This repository contains a production-ready Docker Compose configuration for run
    cd label-studio-container
    ```
 
-2. Create required directories:
+2. Set up the environment:
    ```bash
-   mkdir -p workspace/mydata/{data,export,upload,postgres-data}
-   mkdir -p workspace/deploy/{nginx,pgsql}/certs
+   make setup
    ```
+   This will:
+   - Create necessary directories
+   - Copy the example environment file
+   - Build and start the services
 
-3. Configure environment variables:
-   ```bash
-   cp .env.example .env
-   # Edit .env file with your preferred settings
-   ```
+3. Access Label Studio at http://localhost:8080
 
-4. Start Label Studio:
-   ```bash
-   docker compose up -d
-   ```
+## Using the Makefile
 
-5. Access Label Studio at http://localhost:8080
+The project includes a Makefile for easy management of common tasks:
+
+```bash
+# Complete setup
+make setup              # Initialize, build, and start services
+
+# Service management
+make start             # Start all services
+make stop              # Stop all services
+make restart           # Restart all services
+make status            # Show service status
+make update            # Update services to latest version
+
+# Logs
+make logs              # View all logs
+make logs-app          # View Label Studio logs
+make logs-nginx        # View Nginx logs
+make logs-db           # View PostgreSQL logs
+make logs-redis        # View Redis logs
+
+# Maintenance
+make backup            # Create backup of database and volumes
+make clean             # Remove all containers and volumes
+make fix-permissions   # Fix data directory permissions
+```
+
+For a complete list of available commands, run:
+```bash
+make help
+```
 
 ## Security Configuration
 
@@ -100,45 +128,45 @@ See the `.env` file for all available configuration options. Key variables inclu
 
 ### Backup
 
-1. Database backup:
-   ```bash
-   docker compose exec db pg_dump -U $POSTGRES_USER $POSTGRES_DB > backup.sql
-   ```
+Use the make command to create backups:
+```bash
+make backup
+```
 
-2. Volume backup:
-   ```bash
-   tar -czf label-studio-data.tar.gz workspace/mydata/
-   ```
+This will:
+1. Create a database dump
+2. Create a tar archive of the data directory
+3. Store backups in the `backups` directory
 
 ### Logs
 
-View logs for specific services:
+View logs using make commands:
 ```bash
-docker compose logs -f app    # Label Studio logs
-docker compose logs -f nginx  # Nginx logs
-docker compose logs -f db     # PostgreSQL logs
-docker compose logs -f redis  # Redis logs
+make logs          # All services
+make logs-app      # Label Studio logs
+make logs-nginx    # Nginx logs
+make logs-db       # PostgreSQL logs
+make logs-redis    # Redis logs
 ```
 
 ## Troubleshooting
 
-1. If services fail to start, check logs:
+1. If services fail to start:
    ```bash
-   docker compose logs -f
+   make logs
    ```
 
 2. If database connection fails:
    - Verify PostgreSQL credentials in `.env`
    - Check if PostgreSQL container is healthy:
      ```bash
-     docker compose ps db
+     make status
      ```
 
 3. For permission issues:
-   - Ensure proper ownership of data directories:
-     ```bash
-     sudo chown -R 1001:1001 workspace/mydata/
-     ```
+   ```bash
+   make fix-permissions
+   ```
 
 ## License
 
