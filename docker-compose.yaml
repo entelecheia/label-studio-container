@@ -62,7 +62,11 @@ services:
       retries: 3
     networks:
       - label-studio-network
-    command: label-studio-uwsgi
+    command: >
+      label-studio-uwsgi
+      --username ${LABEL_STUDIO_USERNAME:-admin@labelstud.io}
+      --password ${LABEL_STUDIO_PASSWORD:-admin}
+      --port ${APP_PORT}
 
   db:
     image: pgautoupgrade/pgautoupgrade:13-alpine

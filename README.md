@@ -118,10 +118,18 @@ Before deploying to production, make sure to:
 
 See the `.env` file for all available configuration options. Key variables include:
 
-### User Authentication
-- `LABEL_STUDIO_USERNAME`: Admin username
+### Authentication Configuration
+- `LABEL_STUDIO_USERNAME`: Admin username (default: admin)
+  - Used for initial admin account creation
+  - Passed directly to Label Studio on startup
 - `LABEL_STUDIO_PASSWORD`: Admin password
-- `LABEL_STUDIO_SECRET_KEY`: Django secret key
+  - Must be changed from default in production
+  - Passed directly to Label Studio on startup
+- `LABEL_STUDIO_SECRET_KEY`: Django secret key for session security
+  - Must be changed in production
+  - Used for cryptographic signing
+- `LABEL_STUDIO_DISABLE_SIGNUP_WITHOUT_LINK`: Disable public signups (default: true)
+  - Set to false to allow public user registration
 
 ### Port Configuration
 - `NGINX_HTTP_PORT`: HTTP port for web interface (default: 8080)
