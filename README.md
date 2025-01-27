@@ -118,11 +118,27 @@ Before deploying to production, make sure to:
 
 See the `.env` file for all available configuration options. Key variables include:
 
+### User Authentication
 - `LABEL_STUDIO_USERNAME`: Admin username
 - `LABEL_STUDIO_PASSWORD`: Admin password
 - `LABEL_STUDIO_SECRET_KEY`: Django secret key
-- `POSTGRES_*`: PostgreSQL configuration
-- `REDIS_*`: Redis configuration
+
+### Port Configuration
+- `NGINX_HTTP_PORT`: HTTP port for web interface (default: 8080)
+- `NGINX_HTTPS_PORT`: HTTPS port for web interface (default: 8081)
+- `APP_PORT`: Internal application port (default: 8000)
+- `POSTGRES_PORT`: PostgreSQL database port (default: 5432)
+- `REDIS_PORT`: Redis port (default: 6379)
+
+### Database Configuration
+- `POSTGRES_USER`: PostgreSQL username
+- `POSTGRES_PASSWORD`: PostgreSQL password
+- `POSTGRES_DB`: PostgreSQL database name
+- `POSTGRES_HOST`: PostgreSQL host
+
+### Cache Configuration
+- `REDIS_HOST`: Redis host
+- `REDIS_PASSWORD`: Redis password
 
 ## Maintenance
 

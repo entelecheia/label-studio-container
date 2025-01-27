@@ -5,8 +5,8 @@ services:
     image: heartexlabs/label-studio:latest
     restart: unless-stopped
     ports:
-      - "8080:8085"
-      - "8081:8086"
+      - "${NGINX_HTTP_PORT}:8085"
+      - "${NGINX_HTTPS_PORT}:8086"
     depends_on:
       - app
     environment:
@@ -29,7 +29,7 @@ services:
     image: heartexlabs/label-studio:latest
     restart: unless-stopped
     expose:
-      - "8000"
+      - "${APP_PORT}"
     depends_on:
       db:
         condition: service_healthy
@@ -52,10 +52,11 @@ services:
       - LABEL_STUDIO_SECRET_KEY=${LABEL_STUDIO_SECRET_KEY}
       - PYTHON_UNBUFFERED=${PYTHON_UNBUFFERED}
       - LABEL_STUDIO_LOG_LEVEL=${LABEL_STUDIO_LOG_LEVEL}
+      - LABEL_STUDIO_PORT=${APP_PORT}
     volumes:
       - ./workspace/mydata:/label-studio/data:rw
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:${APP_PORT}/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -71,6 +72,8 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_PORT}:5432"
     volumes:
       - ${POSTGRES_DATA_DIR:-./workspace/mydata/postgres-data}:/var/lib/postgresql/data
       - ./workspace/deploy/pgsql/certs:/var/lib/postgresql/certs:ro
@@ -86,11 +89,13 @@ services:
     image: redis:6-alpine
     hostname: redis
     restart: unless-stopped
-    command: redis-server --requirepass ${REDIS_PASSWORD}
+    command: redis-server --requirepass ${REDIS_PASSWORD} --port ${REDIS_PORT}
+    ports:
+      - "${REDIS_PORT}:${REDIS_PORT}"
     volumes:
       - redis-data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "redis-cli", "-p", "${REDIS_PORT}", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
